@@ -161,8 +161,10 @@ def signup1(request):
         email = request.POST['email']
         password = request.POST['password']
         contact = request.POST['contact']
-        role = request.POST['role']
-        dept = request.POST['dept']
+        # role = request.POST['role']
+        role = request.POST.get('role', '')
+        # dept = request.POST['dept']
+        dept = request.POST.get('dept', '')
         try:
             user = User.objects.create_user(username=email, password=password, first_name=fname, last_name=lname)
             user.is_active = False

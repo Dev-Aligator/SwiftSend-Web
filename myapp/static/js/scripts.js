@@ -110,7 +110,10 @@ function validation(fields) {
       type === "password"
     ) {
       if (!value.trim()) {
-        return { ...res, error: "Please fill this field" };
+        if (type == "tel"){
+          return res;
+        }
+        return { ...res, error: "Please fill this field hmi" };
       } else {
         if (type === "email")
           return valid
@@ -129,8 +132,10 @@ function validation(fields) {
             : { ...res, error: "Password must be atleast 8 characters" };
         else return res;
       }
-    } else if (type === "select")
-      return value != "0" ? res : { ...res, error: "Please fill this field" };
+    } 
+    else if (type === "select")
+      // return value != "0" ? res : { ...res, error: "Please fill this field hmi" };
+      return res;
     else if (type === "file") {
       const supported = [
         "pdf",

@@ -2,21 +2,21 @@
 {% load svg %}
 <footer>
   <div class="social">
-    <a href="#" title="Facebook" class="link-fb">
+    <a href="https://www.facebook.com/otaku.toila.54" title="Facebook" class="link-fb">
       {% svg "icon-facebook" %}
     </a>
-    <a href="#" title="Twitter" class="link-twitter">
+    <!-- <a href="#" title="Twitter" class="link-twitter">
       {% svg "icon-twitter" %}
     </a>
     <a href="#" title="Instagram" class="link-insta">
       {% svg "icon-instagram" %}
-    </a>
-    <a href="https://github.com/chiraag-kakar/sharenlearn/" class="link-git" title="Github">
+    </a> -->
+    <a href="https://github.com/Dev-Aligator" class="link-git" title="Github">
       {% svg "icon-github" %}
     </a>
   </div>
   <p class="cright">
-    Share N Learn &copy; 2021
+    SwiftSend &copy; 2023
   </p>
   {% if request.user.is_authenticated %}
   <a href="{% url "contact" %}">Contact us</a>
@@ -27,6 +27,6 @@
   </button>
   {% if not request.user.is_authenticated %}
   <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
-  <df-messenger intent="WELCOME" chat-title="sharenlearn" agent-id="26f824ca-db06-49b2-b8c2-22c6612e0819" language-code="en"></df-messenger>
+  <df-messenger intent="WELCOME" chat-title="SwiftSend" agent-id="26f824ca-db06-49b2-b8c2-22c6612e0819" language-code="en"></df-messenger>
   {% endif %}
 </footer>

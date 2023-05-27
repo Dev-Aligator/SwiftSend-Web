@@ -40,14 +40,16 @@
             {% elif i.branch == "5" %}
             ME
             {% else %}
-            Engg.
+            Other.
             {% endif %}
           </span>
           <span title="Role" class="label u-role">
             {% if i.role == "1" %}
             Student
-            {% else %}
+            {% elif i.role == "2" %}
             Faculty
+            {% else %}
+            Other
             {% endif %}
           </span>
         </p>
