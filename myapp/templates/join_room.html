@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+{% load svg %}
+{% block content %}
+{% include "header.html" %}
+
+<main>
+    <div class="login">
+      <h1 class="colored title">Join a Room</h1>
+      <form method="POST" class="login-form">
+        {% csrf_token %}
+        <div class="input-group">
+          <label for="name">Room Code:</label>
+          <div class="input-field">
+            <input type="text" name="room_code" id="room_code" required>
+          </div>
+        </div>
+        <div class="form-footer">
+          <button type="submit" class="button lg" id="login-btn">Join</button>
+        </div>
+      </form>
+
+      
+    </div>
+  </main>
+
+
+{% include "footer1.html" %}
+{% endblock content %}

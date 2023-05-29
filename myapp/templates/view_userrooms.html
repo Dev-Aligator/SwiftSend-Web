@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+{% load svg %}
+{% block content %}
+{% include "header.html" %}
+<main>
+  <div class="notes">
+    <div class="notes-header">
+      <div>All Joined Rooms</div>
+      <div class="filters">
+        <div class="clear-filters">
+          <div class="clear-icon">{% svg "icon-cross" %}</div>
+          Clear current search queries
+        </div>
+        <details>
+            <summary id="branch">Room Code</summary>
+        </details>
+        <details>
+            <summary id="branch">Number of Users</summary>
+        </details>
+      </div>
+    </div>
+    <p class="emsg">No results matched your search.</p>
+    {% if rooms|length == 0  %}
+    <p class="msg">There're nothing here</p>
+    {% endif %}
+    {% for room in rooms %}
+    <div class="note">
+      <div class="note-info">
+        <a class="note-title" href="#">{{room.name}}</a>
+        <div class="note-u-profile" {% if room.creator.profile %} style="background-image: url({{room.creator.profile.url}})" {% endif %} {% if self %} style="background-image: url({% if i.status == "Pending" %}{% static 'images/icon-pending.svg' %}{% elif i.status == "Accepted" %}{% static 'images/icon-approved.svg' %}{% else %}{% static 'images/icon-cross-red.svg' %}{% endif %})" ; {% endif %}></div>
+        <div class="note-meta">{{room.created_at}} by <a href="mailto:{{room.creator.username}}">{{room.creator.username}}</a></div>
+        <span style="display: none;" class="note-status">{{room.status}}</span>
+      </div>
+      <div class="action">
+        <p class="note-dept">
+          {{ room.room_code }}
+        </p>
+        <p class="note-dept">
+            {{ room.users.count }}
+        </p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</main>
+<script>
+  const t = "{{ csrf_token }}";
+  const a_s = "{% url 'assign_status' %}";
+  const lg = "{% url 'login' %}";
+  const p = "{% url 'profile' %}";
+  const a_d = "{% url 'admin_dashboard' 'open' %}";
+</script>
+{% include "footer1.html" %}
+{% endblock content %}

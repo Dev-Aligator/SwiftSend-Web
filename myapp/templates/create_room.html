@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+{% load svg %}
+{% block content %}
+{% include "header.html" %}
+
+<main>
+    <div class="login">
+      <h1 class="colored title">Create a new Room</h1>
+      <form method="POST" class="login-form">
+        {% csrf_token %}
+        <div class="input-group">
+          <label for="name">Room Name:</label>
+          <div class="input-field">
+            <input type="text" name="name" id="name" required>
+          </div>
+        </div>
+        <div class="input-group">
+          <label for="password">Room Description:</label>
+          <div class="input-field">
+            <input type="text" name="description" id="description">
+          </div>
+        </div>
+        <div class="g-recaptcha" data-sitekey="6Lf3i3waAAAAABaIbVWFi0Cnmq5YQ5JuG_NC2fVd"></div>
+        <div class="form-footer">
+          <button type="submit" class="button lg" id="login-btn">Create</button>
+        </div>
+      </form>
+
+      
+    </div>
+  </main>
+
+
+{% include "footer1.html" %}
+{% endblock content %}

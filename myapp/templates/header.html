@@ -29,6 +29,9 @@
       <li>
         <a href="{% url "viewall_usernotes" %}">All Uploads</a>
       </li>
+      <li>
+        <a href="{% url "view_userrooms" %}">My Rooms</a>
+      </li>
       {% endif %}
       {% else %}
       <li>
@@ -52,7 +55,11 @@
     </ul>
   </nav>
   {% if request.user.is_authenticated %}
-  <a href="#" class="button auth-log" id="logout-btn">Logout</a>
+  <div class="n-users">
+  <a href="{% url 'join_room' %}" class="button auth-log">Join Room</a>
+  <a href="#" class="button auth-log" id="logout-btn" style="margin-right: 0.5rem" >Logout</a>
+  </div>
+
   {% else %}
   <div class="n-users">
     <a href="{% url 'signup' %}" class="button auth-log" style="margin-right: 0.5rem">Sign Up</a>

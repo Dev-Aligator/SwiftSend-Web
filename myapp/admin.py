@@ -4,3 +4,4 @@ from .models import *
 admin.site.register(Signup)
 admin.site.register(Notes)
 admin.site.register(OTPModel)
+admin.site.register(Room)

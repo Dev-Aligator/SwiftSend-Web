@@ -29,6 +29,7 @@ from django.http import JsonResponse
 from django.contrib import messages
 import re
 
+import uuid
 # Make a regular expression
 # for validating an Email
 regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
@@ -859,3 +860,66 @@ def dislike(request):
                 job = "dislike"
             note.save()
         return JsonResponse({"message": "success", "job": job, "l_count": len(note.likes.all()), "dl_count": len(note.dislikes.all())})
+
+
+def create_room(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    if request.method == 'POST':
+        name = request.POST['name']
+        description = request.POST['description']
+        creator = request.user  # Assuming the user is authenticated
+
+        room_code = str(uuid.uuid4()).replace('-', '')[:8]
+        room = Room.objects.create(name=name, description=description, creator=creator, room_code=room_code)
+        # You can generate a unique room code here and assign it to room.room_code
+
+        # Redirect the user to the newly created room or any other page
+        # return redirect('room_detail', room_id=room.pk)
+        room_code_msg = "Successfully Create a Room, Room code: " + room_code
+        signup.joined_rooms.add(room)
+
+        signup = Signup.objects.get(user=request.user)
+
+        messages.success(request, room_code_msg)
+
+        return redirect('profile')
+
+    return render(request, 'create_room.html')
+
+def join_room(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    
+    if request.method == 'POST':
+        room_code = request.POST['room_code']
+        room = Room.objects.get(room_code=room_code)
+        signup = Signup.objects.get(user=request.user)
+        signup.joined_rooms.add(room)
+        return redirect('profile')
+    
+    return render(request, 'join_room.html')
+
+
+def view_userrooms(request):
+    if not request.user.is_authenticated:
+        messages.info(request, "Please login to access all rooms")
+        return redirect('login')
+    signup = Signup.objects.get(user=request.user)
+    rooms = signup.joined_rooms.all()
+    # for i in notes:
+    #     try:
+    #         i.profile = Signup.objects.get(user=i.user).profile_photo
+    #         i.liked_note = i in Signup.objects.get(user=request.user).liked.all()
+    #         i.disliked_note = i in Signup.objects.get(user=request.user).disliked.all()
+    #         i.l_count = len(i.likes.all())
+    #         i.dl_count = len(i.dislikes.all())
+    #     except Exception as e:
+    #         print(e)
+    #         i.profile = None
+    # d = {'notes': notes, 'viewall': True, 'reviewed': True}
+    ctx = {
+        'rooms' : rooms,
+    }
+    return render(request, 'view_userrooms.html', ctx)
