@@ -45,6 +45,146 @@
       <a href="{% url 'edit_profile' %}" class="button" style="background-color:crimson; position:absolute; left: 40%; transform: translateX(-50%); bottom: -5rem;">Delete</a>
 
     </div>
+
+
+
+    <div class="notes">
+        <div class="notes-header">
+          <div>All Uploads</div>
+          <div class="filters">
+            <div class="clear-filters">
+              <div class="clear-icon">{% svg "icon-cross" %}</div>
+              Clear current search queries
+            </div>
+            <details>
+                <summary id="status">Date</summary>
+            </details>
+            <details>
+              <summary id="ftype">File Type</summary>
+              <ul class="dropdown">
+                <li>All</li>
+                <li>PDF</li>
+                <li>JPG</li>
+                <li>JPEG</li>
+                <li>PNG</li>
+                <li>TXT</li>
+                <li>DOCX</li>
+                <li>PPTX</li>
+                <li>MD</li>
+                <li>SVG</li>
+                <li>ZIP</li>
+              </ul>
+            </details>
+            <details>
+              <summary id="status">Reviews</summary>
+            </details>
+          </div>
+        </div>
+        <p class="emsg">No results matched your search.</p>
+        {% if notes|length == 0  %}
+        <p class="msg">There're nothing here</p>
+        {% endif %}
+        {% for i in notes %}
+        <div class="note">
+          <div class="note-info">
+            <a class="note-title" href="/note/{{i.id}}">{{i.subject|title}}</a>
+            <div class="note-u-profile" {% if i.profile %} style="background-image: url({{i.profile.url}})" {% endif %}></div>
+            <div class="note-meta">{{i.uploadingdate}} by <a href="mailto:{{i.user.username}}">{{i.user.username}}</a></div>
+            <span style="display: none;" class="note-status">{{i.status}}</span>
+          </div>
+          <div class="action">
+            <p class="note-dept">
+              {{ i.uploadingdate  }}
+            </p>
+            <a href="{{i.notesfile.url}}" class="note-type">{{i.filetype|upper}}</a>
+            <div class="note-reaction nr {% if request.user.is_staff or request.user.is_superuser %}not-imp{% endif %}">
+              <div class="like">
+                <button class="{% if i.liked_note %}tick{% endif %}" data-url="{% url "like" %}" data-not-login="{% url "login" %}" id="like-it" data-id={{i.id}}>{% svg "icon-thumbsup" %}</button>
+                <span id="like-count">{{ i.l_count }}</span>
+              </div>
+              <div class="dislike">
+                <button class="{% if i.disliked_note %}tick{% endif %}" data-url="{% url "dislike" %}" data-not-login="{% url "login" %}" id="dislike-it" data-id={{i.id}}>{% svg "icon-thumbsdown" %}</button>
+                <span id="dislike-count">{{ i.dl_count }}</span>
+              </div>
+            </div>
+            {% if request.user.is_staff or request.user.is_superuser %}
+            <div class="note-action">
+              {% if not reviewed %}
+              <button class="button fine as-st accept" data-id={{i.id}} data-job="accept">Accept</button>
+              <button class="button dang as-st reject" data-id={{i.id}} data-job="reject">Reject</button>
+              {% else %}
+              {% if i.status == "Accepted" %}
+              <button class="button dang as-st reject" data-id={{ i.id }} data-job="reject">Reject</button>
+              {% else %}
+              <button class="button fine as-st accept" data-id={{i.id}} data-job="accept">Accept</button>
+              {% endif %}
+              {% endif %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+        <br>
+
+      <div class="notes">
+        <div class="notes-header">
+          <div>All Users</div>
+          <div class="filters">
+            <div class="clear-filters">
+              <div class="clear-icon">{% svg "icon-cross" %}</div>
+              Clear current search queries
+            </div>
+            <details>
+                <summary id="status">Date Joined</summary>
+            </details>
+            <details>
+              <summary id="ftype">Uploads</summary>
+            </details>
+
+          </div>
+        </div>
+        <p class="emsg">No results matched your search.</p>
+        {% if members|length == 0  %}
+        <p class="msg">There're nothing here</p>
+        {% endif %}
+        {% for u in members %}
+        <div class="note">
+          <div class="note-info">
+            <a class="note-title" href="#">{{u.user.first_name}} {{ u.user.last_name }}</a>
+            <div class="note-u-profile" {% if u.profile_photo %} style="background-image: url({{u.profile_photo.url}})" {% endif %}></div>
+            <div class="note-meta">Email Address: <a href="mailto:{{u.user.username}}">{{u.user.username}}</a></div>
+            <span style="display: none;" class="note-status">{{i.status}}</span>
+          </div>
+          <div class="action">
+            <p class="note-dept">
+              {{ i.uploadingdate  }}
+            </p>
+            <div>
+                <span>
+                    {{ u.uploads }}
+                </span>
+              </div>
+            </div>
+            {% if request.user.is_staff or request.user.is_superuser %}
+            <div class="note-action">
+              {% if not reviewed %}
+              <button class="button fine as-st accept" data-id={{i.id}} data-job="accept">Accept</button>
+              <button class="button dang as-st reject" data-id={{i.id}} data-job="reject">Reject</button>
+              {% else %}
+              {% if i.status == "Accepted" %}
+              <button class="button dang as-st reject" data-id={{ i.id }} data-job="reject">Reject</button>
+              {% else %}
+              <button class="button fine as-st accept" data-id={{i.id}} data-job="accept">Accept</button>
+              {% endif %}
+              {% endif %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
 </main>
 {% include "footer1.html" %}
 <script>

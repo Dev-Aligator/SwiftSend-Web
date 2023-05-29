@@ -941,18 +941,22 @@ def view_room(request, code):
     
     room_code = code.rsplit('.', 1)[1]
     room = Room.objects.get(room_code=room_code)
-    try:
-        pass
-        # note.profile = Signup.objects.get(user=note.user).profile_photo
-        # note.liked_note = note in Signup.objects.get(user=request.user).liked.all()
-        # note.disliked_note = note in Signup.objects.get(user=request.user).disliked.all()
-        # note.l_count = len(note.likes.all())
-        # note.dl_count = len(note.dislikes.all())
-        # note.own = (note.user.id == request.user.id)
-    except:
-        # note.profile = None
-        pass
-    d = {'data': room, 'code':code}
+    members = room.users.all()
+    notes = Notes.objects.filter(branch=room.room_code, status="Accepted")
+    for i in notes:
+        try:
+            i.profile = Signup.objects.get(user=i.user).profile_photo
+            i.liked_note = i in Signup.objects.get(user=request.user).liked.all()
+            i.disliked_note = i in Signup.objects.get(user=request.user).disliked.all()
+            i.l_count = len(i.likes.all())
+            i.dl_count = len(i.dislikes.all())
+        except Exception as e:
+            print(e)
+            i.profile = None
+    
+    for u in members:
+        u.uploads = Notes.objects.filter(user=u.user, branch=room.room_code).count()
+    d = {'data': room, 'code':code, 'notes': notes, 'members': members}
     return render(request, "view_room.html", d)
     
 
