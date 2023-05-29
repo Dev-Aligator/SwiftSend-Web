@@ -368,6 +368,8 @@ def upload_notes(request):
     if not request.user.is_authenticated:
         messages.info(request, "Login to Upload Notes")
         return redirect('login')
+    signup = Signup.objects.get(user=request.user) 
+    joined_room = signup.joined_rooms.all()
     if request.method == 'POST':
         b = request.POST['dept']
         s = request.POST['subject']
@@ -375,6 +377,7 @@ def upload_notes(request):
         f = request.POST['ftype']
         d = request.POST['desc']
         u = User.objects.filter(username=request.user.username).first()
+        
         try:
             Notes.objects.create(user=u, uploadingdate=datetime.date.today(), branch=b, subject=s,
                                  notesfile=n, filetype=f, description=d, status="Pending")
@@ -383,7 +386,7 @@ def upload_notes(request):
         except:
             messages.error(request, f'Something went wrong, Try Again')
 
-    return render(request, 'upload_notes.html', {'auth': request.user.is_authenticated})
+    return render(request, 'upload_notes.html', {'auth': request.user.is_authenticated, 'rooms' : joined_room})
 
 
 def delete_usernotes(request, pid):
@@ -457,6 +460,9 @@ def view_usernotes(request, type):
         return redirect('login')
     user = User.objects.get(id=request.user.id)
     notes = Notes.objects.filter(user=user)
+    signup = Signup.objects.get(user=user)
+    rooms = signup.joined_rooms.all()
+
     reviewed = False
     if type == "reviewed":
         notes = notes.exclude(status="Pending")
@@ -470,7 +476,7 @@ def view_usernotes(request, type):
         i.dl_count = len(i.dislikes.all())
     l_pen = len(Notes.objects.filter(user=user, status="Pending"))
     l_rev = len((Notes.objects.filter(user=user)).exclude(status="Pending"))
-    d = {'notes': notes, 'self': True, 'reviewed': reviewed, 'l_rev': l_rev, 'l_pen': l_pen }
+    d = {'notes': notes, 'self': True, 'reviewed': reviewed, 'l_rev': l_rev, 'l_pen': l_pen, 'rooms': rooms }
     return render(request, 'viewall_usernotes.html', d)
 
 def viewall_usernotes(request):
@@ -478,6 +484,9 @@ def viewall_usernotes(request):
         messages.info(request, "Please login to access all uploads")
         return redirect('login')
     notes = Notes.objects.filter(status="Accepted")
+    signup = Signup.objects.get(user=request.user)
+    rooms = signup.joined_rooms.all()
+
     for i in notes:
         try:
             i.profile = Signup.objects.get(user=i.user).profile_photo
@@ -488,7 +497,7 @@ def viewall_usernotes(request):
         except Exception as e:
             print(e)
             i.profile = None
-    d = {'notes': notes, 'viewall': True, 'reviewed': True}
+    d = {'notes': notes, 'viewall': True, 'reviewed': True, 'rooms': rooms}
     return render(request, 'viewall_usernotes.html', d)
 
 
@@ -878,13 +887,13 @@ def create_room(request):
         # Redirect the user to the newly created room or any other page
         # return redirect('room_detail', room_id=room.pk)
         room_code_msg = "Successfully Create a Room, Room code: " + room_code
-        signup.joined_rooms.add(room)
 
         signup = Signup.objects.get(user=request.user)
+        signup.joined_rooms.add(room)
 
         messages.success(request, room_code_msg)
 
-        return redirect('profile')
+        return redirect('view_userrooms')
 
     return render(request, 'create_room.html')
 
@@ -897,7 +906,7 @@ def join_room(request):
         room = Room.objects.get(room_code=room_code)
         signup = Signup.objects.get(user=request.user)
         signup.joined_rooms.add(room)
-        return redirect('profile')
+        return redirect('view_userrooms')
     
     return render(request, 'join_room.html')
 

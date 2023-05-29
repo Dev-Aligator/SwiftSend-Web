@@ -25,6 +25,9 @@
         <div class="input-field">
           <select name="dept" id="dept" data-type="select">
             <option value="0" selected disabled>Select Department</option>
+            {% for room in rooms %}
+                <option value="{{ room.room_code }}"> {{ room.name }} </option>
+            {% endfor %}
             <option value="1">Computer Science and Engg.</option>
             <option value="2">Electrical Engg.</option>
             <option value="3">Electronics and Communication Engg.</option>

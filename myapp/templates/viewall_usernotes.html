@@ -41,6 +41,9 @@
           <summary id="branch">Branch</summary>
           <ul class="dropdown brnch">
             <li>All</li>
+            {% for room in rooms %} 
+              <li>{{ room.name }}</li>
+            {% endfor %}
             <li>ECE</li>
             <li>CSE</li>
             <li>IT</li>
@@ -94,6 +97,12 @@
       </div>
       <div class="action">
         <p class="note-dept">
+          {% for room in rooms %} 
+            {% if i.branch == room.room_code %} 
+                 {{ room.name }}
+            {% endif %}
+          {% endfor %}
+
           {% if i.branch == "1" %}
           CSE
           {% elif i.branch == "2" %}
@@ -104,8 +113,6 @@
           IT
           {% elif i.branch == "5" %}
           ME
-          {% else %}
-          Engg.
           {% endif %}
         </p>
         <a href="{{i.notesfile.url}}" class="note-type">{{i.filetype|upper}}</a>
