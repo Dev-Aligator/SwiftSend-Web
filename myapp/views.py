@@ -932,3 +932,50 @@ def view_userrooms(request):
         'rooms' : rooms,
     }
     return render(request, 'view_userrooms.html', ctx)
+
+
+def view_room(request, code):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    
+    room_code = code.rsplit('.', 1)[1]
+    print(room_code)
+    room = Room.objects.get(room_code=room_code)
+    try:
+        pass
+        # note.profile = Signup.objects.get(user=note.user).profile_photo
+        # note.liked_note = note in Signup.objects.get(user=request.user).liked.all()
+        # note.disliked_note = note in Signup.objects.get(user=request.user).disliked.all()
+        # note.l_count = len(note.likes.all())
+        # note.dl_count = len(note.dislikes.all())
+        # note.own = (note.user.id == request.user.id)
+    except:
+        # note.profile = None
+        pass
+    d = {'data': room, 'code':code}
+    return render(request, "view_room.html", d)
+    
+
+
+
+def edit_room(request, code):
+    if not request.user.is_authenticated:
+        messages.info(request, "Please login first")
+        return redirect('login')
+    print("hmi")
+    try:
+        room_code = code.rsplit('.', 1)[1]
+    except:
+        room_code=code
+    print(room_code)
+    room = Room.objects.get(room_code=room_code)
+    if request.method == 'POST':
+        room.name = request.POST['name']
+        room.description = request.POST['description']
+        room.save()
+        ## Perform logic here
+
+        messages.success(request, "Room Information Updated Successfully")
+        return redirect('view_userrooms')
+    d = {'room': room, 'code':code}
+    return render(request, 'edit_room.html', d)

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+{% load svg %}
+{% block content %}
+{% include "header.html" %}
+<main class="big">
+  <div class="profile-section">
+    <div class="profile">
+      {% if data.photo %}
+      <div class="avatar" title="Change Profile Picture" style="background-image: url({{data.photo.url}})">
+        {% else %}
+        <div class="avatar" title="Change Profile Picture">
+          {% endif %}
+          <input type="file" class="avatar-input" name="avatar" id="avatar" title="Change Profile Picture">
+          {% svg "icon-edit" %}
+          {% if data.photo %}
+          <button class="cross" title="Delete Profile Picture">{% svg "icon-cross" %}</button>
+          {% endif %}
+          <p class="img-msg"></p>
+        </div>
+        <div class="profile-main">
+          <h1 class="user-name">{{data.name}}</h1>
+          <p class="user-email">{{data.creator.username}}</p>
+        </div>
+      </div>
+      <div class="profile-data">
+        <div class="field">
+          <div class="field-name">Room Code</div>
+          <div class="field-value">
+            {{ data.room_code }}
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-name">Members</div>
+          <div class="field-value">
+            {{ data.users.count }}
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-name">Created</div>
+          <div class="field-value">{{data.created_at}}</div>
+        </div>
+      </div>
+      <a href="{% url 'edit_room' code=code %}" class="button" style="width:108px; text-align:center;">Edit</a>
+      <a href="{% url 'edit_profile' %}" class="button" style="background-color:crimson; position:absolute; left: 40%; transform: translateX(-50%); bottom: -5rem;">Delete</a>
+
+    </div>
+</main>
+{% include "footer1.html" %}
+<script>
+  const t = "{{ csrf_token }}";
+  const u = "{% url 'update_profile_photo' %}";
+  const l = "{% url 'login' %}";
+  const u_d = "{% url 'delete_profile_photo' %}";
+</script>
+{% endblock content %}
