@@ -30,6 +30,7 @@ from django.contrib import messages
 import re
 
 import uuid
+from .forms import *
 # Make a regular expression
 # for validating an Email
 regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
@@ -939,7 +940,6 @@ def view_room(request, code):
         return redirect('login')
     
     room_code = code.rsplit('.', 1)[1]
-    print(room_code)
     room = Room.objects.get(room_code=room_code)
     try:
         pass
@@ -962,14 +962,12 @@ def edit_room(request, code):
     if not request.user.is_authenticated:
         messages.info(request, "Please login first")
         return redirect('login')
-    print("hmi")
-    try:
-        room_code = code.rsplit('.', 1)[1]
-    except:
-        room_code=code
-    print(room_code)
+    room_code = code.rsplit('.', 1)[1]
     room = Room.objects.get(room_code=room_code)
     if request.method == 'POST':
+        form = ImageRoomForm(request.POST, request.FILES, instance=room)
+        if form.is_valid():
+            form.save()
         room.name = request.POST['name']
         room.description = request.POST['description']
         room.save()
@@ -977,5 +975,9 @@ def edit_room(request, code):
 
         messages.success(request, "Room Information Updated Successfully")
         return redirect('view_userrooms')
-    d = {'room': room, 'code':code}
+    
+
+    else:
+        form = ImageRoomForm()
+    d = {'room': room, 'form':form}
     return render(request, 'edit_room.html', d)

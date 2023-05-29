@@ -5,7 +5,7 @@
 <main>
   <div class="edit-profile">
     <h1 class="colored title">Edit Room</h1>
-    <form method="POST" class="edit-profile-form">
+    <form method="POST" class="edit-profile-form" enctype="multipart/form-data">
       {% csrf_token %}
       <div class="input-group">
         <label for="name">Room Name:</label>
@@ -17,6 +17,12 @@
         <label for="lname">Room Description:</label>
         <div class="input-field">
           <input type="text" name="description" id="description" autocomplete="off" spellcheck="false" data-type="text" value={{room.description}}>
+        </div>
+      </div>
+      <div class="input-group">
+        <label for="photo">Room Photo:</label>
+        <div class="input-field">
+          {{ form.photo }}
         </div>
       </div>
       <div class="form-footer">

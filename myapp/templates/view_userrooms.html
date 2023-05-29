@@ -27,8 +27,8 @@
     {% for room in rooms %}
     <div class="note">
       <div class="note-info">
-        <a class="note-title" href="#">{{room.name}}</a>
-        <div class="note-u-profile" {% if room.creator.signup.profile_photo %} style="background-image: url({{room.creator.signup.profile_photo.url}})" {% endif %}></div>
+        <a class="note-title" href="{% url 'view_room' code=room.name|lower|slugify|add:'.'|add:room.room_code %}">{{room.name}}</a>
+        <div class="note-u-profile" {% if room.photo %} style="background-image: url({{room.photo.url}})" {% endif %}></div>
         <div class="note-meta">{{room.created_at}} by <a href="mailto:{{room.creator.username}}">{{room.creator.username}}</a></div>
         <span style="display: none;" class="note-status">{{room.status}}</span>
       </div>

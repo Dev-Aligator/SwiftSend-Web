@@ -7,11 +7,11 @@
   <div class="profile-section">
     <div class="profile">
       {% if data.photo %}
-      <div class="avatar" title="Change Profile Picture" style="background-image: url({{data.photo.url}})">
+      <div class="avatar" title="{{ data.name }}" style="background-image: url({{data.photo.url}})">
         {% else %}
-        <div class="avatar" title="Change Profile Picture">
+        <div class="avatar" title="{{ data.name }}">
           {% endif %}
-          <input type="file" class="avatar-input" name="avatar" id="avatar" title="Change Profile Picture">
+          <a href="{% url 'edit_room' code=code %}" class="avatar-input" name="avatar" id="avatar" title="Change Profile Picture"></a>
           {% svg "icon-edit" %}
           {% if data.photo %}
           <button class="cross" title="Delete Profile Picture">{% svg "icon-cross" %}</button>
