@@ -45,6 +45,20 @@ def check(email):
 
 
 def index(request):
+    """
+    Renders the index page.
+
+    If the user is already authenticated, the function redirects them to the profile page.
+    Otherwise, it renders the home.html template with the context indicating whether the user is authenticated.
+
+    Parameters:
+    - request: The HTTP request object.
+
+    Returns:
+    - If the user is authenticated, a redirect response to the profile page.
+    - If the user is not authenticated, a rendered HTML template of the home page.
+
+    """
     if request.user.is_authenticated:
         return redirect('/profile')
     context = {'auth': request.user.is_authenticated}
@@ -157,6 +171,22 @@ def check_token(uid, otp):
         return False
 
 def signup1(request):
+    """
+    Handles the user signup functionality.
+
+    If the request method is POST, the function processes the signup request by creating a new user account,
+    saving the user details, and sending a verification email for account activation.
+
+    Parameters:
+    - request: The HTTP request object.
+
+    Returns:
+    - If the request method is POST and the signup process is successful, redirects to the 'login' page with a success message.
+    - If the request method is POST and the signup process encounters an error, renders the 'signup.html' template with
+      error messages indicating the cause of the failure.
+    - If the user is already authenticated, redirects to the 'index' page.
+    - If the request method is GET, renders the 'signup.html' template.
+    """
     if request.method == 'POST':
         fname = request.POST['fname']
         lname = request.POST['lname']
@@ -187,6 +217,21 @@ def signup1(request):
 
 
 def userlogin(request):
+    """
+    Handles the user login functionality.
+
+    If the user is not authenticated, the function processes the login request by validating the CAPTCHA response,
+    checking the user credentials, and performing necessary actions based on the authentication result.
+
+    Parameters:
+    - request: The HTTP request object.
+
+    Returns:
+    - If the user is not authenticated and the request method is POST, returns a JSON response with messages indicating
+      the CAPTCHA validation result, login success, login failure, email activation, or other errors.
+    - If the user is not authenticated and the request method is GET, renders the login.html template.
+    - If the user is already authenticated, redirects them to the 'index' page.
+    """
     if not request.user.is_authenticated:
         if request.method == "POST":
             captcha_token = request.POST['g-recaptcha-response']
@@ -256,6 +301,25 @@ def activate_user(request, uid, otp):
     return redirect('login')
 
 def profile(request):
+    """
+    View function for rendering the user profile page.
+
+    Parameters:
+    - request (HttpRequest): The HTTP request object.
+
+    Returns:
+    - HttpResponse: The response object containing the rendered profile page.
+
+    Raises:
+    - Redirect: If the user is not authenticated, it redirects to the login page.
+
+    Notes:
+    - This function requires the user to be authenticated.
+    - The user profile page displays information about the logged-in user.
+    - If the user is a superuser, they have administrative privileges.
+    - If the user is a staff member, they have staff-specific privileges.
+    - The 'profile.html' template is used to render the profile page.
+    """
     if not request.user.is_authenticated:
         return redirect('login')
     user = User.objects.get(id=request.user.id)
@@ -366,6 +430,27 @@ def delete_profile_photo(request):
     return redirect('login')
 
 def upload_notes(request):
+    """
+    Handles the uploading of notes.
+
+    If the user is not authenticated, the function redirects them to the login page with an info message.
+    Otherwise, it retrieves the user's signup details and the rooms they have joined.
+    If the request method is POST, the function processes the notes upload request by extracting the note details,
+    creating a new Notes instance with the uploaded file, and setting the note status as "Pending".
+    It then redirects the user to the 'view_usernotes/open' page with a success message.
+    If the note upload encounters an error, it displays an error message.
+    If the request method is GET, it renders the 'upload_notes.html' template with the user's authentication status and
+    the rooms they have joined as context.
+
+    Parameters:
+    - request: The HTTP request object.
+
+    Returns:
+    - If the user is not authenticated, redirects to the 'login' page with an info message.
+    - If the request method is POST and the notes upload is successful, redirects to the 'view_usernotes/open' page with a success message.
+    - If the request method is GET, renders the 'upload_notes.html' template with the user's authentication status and joined rooms as context.
+
+    """
     if not request.user.is_authenticated:
         messages.info(request, "Login to Upload Notes")
         return redirect('login')
@@ -481,6 +566,25 @@ def view_usernotes(request, type):
     return render(request, 'viewall_usernotes.html', d)
 
 def viewall_usernotes(request):
+    """
+    Renders the page displaying all accepted user notes.
+
+    If the user is not authenticated, the function redirects them to the login page with an information message.
+    Otherwise, it fetches all notes with a status of "Accepted" and performs additional operations to populate
+    extra information for each note, such as profile photo, liked/disliked status, and like/dislike counts.
+    The function also retrieves the joined rooms for the logged-in user.
+
+    Parameters:
+    - request: The HTTP request object.
+
+    Returns:
+    - If the user is not authenticated, redirects to the 'login' page with an information message.
+    - If the user is authenticated, renders the 'viewall_usernotes.html' template with the following context data:
+        - 'notes': A queryset of all accepted notes.
+        - 'viewall': A boolean value indicating that all notes are being viewed.
+        - 'reviewed': A boolean value indicating that the notes have been reviewed.
+        - 'rooms': A queryset of joined rooms for the logged-in user.
+    """
     if not request.user.is_authenticated:
         messages.info(request, "Please login to access all uploads")
         return redirect('login')
@@ -532,6 +636,18 @@ def password_validation(request):
 # AJAX Validations End Here
 
 def admin_dashboard(request, type):
+    """
+    View function for the admin dashboard in the UCPC application.
+
+    Displays the notes based on the specified type (reviewed or pending) for admin users.
+
+    Parameters:
+    - request: The HTTP request object.
+    - type: The type of notes to display ("reviewed" or "pending").
+
+    Returns:
+    - The rendered HTML template with the notes and additional context variables.
+    """
     reviewed = False
     if not request.user.is_authenticated:
         return redirect('login')
@@ -557,6 +673,18 @@ def admin_dashboard(request, type):
     return render(request, 'viewall_usernotes.html', d)
 
 def superadmin_dashboard(request, type):
+    """
+    View function for the superadmin dashboard in the UCPC application.
+
+    Displays users based on the specified type (basic, staff, admin) for superadmin users.
+
+    Parameters:
+    - request: The HTTP request object.
+    - type: The type of users to display ("basic", "staff", "admin").
+
+    Returns:
+    - The rendered HTML template with the users and additional context variables.
+    """
     if request.user.is_authenticated and request.user.is_superuser:
         basic_users = [i.id for i in User.objects.filter(is_staff=False, is_superuser=False)]
         staff_users = [i.id for i in User.objects.filter(is_staff=True, is_superuser=False)]
@@ -809,6 +937,26 @@ def send_otp_basic(request):
             return JsonResponse({"message": "erroronotp"})
 
 def view_note(request, id):
+    """
+    Renders the view for a specific note.
+
+    If the user is not authenticated, the function redirects them to the login page.
+    Otherwise, it attempts to retrieve the note based on the provided ID.
+    It fetches additional details for the note, such as the profile photo of the user who uploaded the note,
+    whether the current user has liked or disliked the note, the count of likes and dislikes,
+    and whether the current user owns the note.
+    Finally, it renders the 'view_note.html' template with the note details as context.
+
+    Parameters:
+    - request: The HTTP request object.
+    - id: The ID of the note for identifying the note.
+
+    Returns:
+    - If the user is not authenticated, redirects to the 'login' page.
+    - If the note is successfully retrieved and additional details are fetched, renders the 'view_note.html' template with the note details as context.
+    - If the note is not found, returns an HttpResponse indicating that the resource is not available.
+
+    """
     if not request.user.is_authenticated:
         return redirect('login')
     try:
@@ -873,6 +1021,24 @@ def dislike(request):
 
 
 def create_room(request):
+    """
+    Handles the creation of a new room.
+
+    If the user is not authenticated, the function redirects them to the login page.
+    If the request method is POST, the function processes the room creation request by extracting the room details,
+    generating a unique room code, creating a new room instance, associating the creator with the room, and adding the
+    creator to the joined_rooms field of their signup. It then redirects the user to the 'view_userrooms' page with a success message.
+    If the request method is GET, it renders the 'create_room.html' template.
+
+    Parameters:
+    - request: The HTTP request object.
+
+    Returns:
+    - If the user is not authenticated, redirects to the 'login' page.
+    - If the request method is POST and the room creation is successful, redirects to the 'view_userrooms' page with a success message.
+    - If the request method is GET, renders the 'create_room.html' template.
+
+    """
     if not request.user.is_authenticated:
         return redirect('login')
 
@@ -913,22 +1079,26 @@ def join_room(request):
 
 
 def view_userrooms(request):
+    """
+    Renders the user rooms view.
+
+    If the user is not authenticated, the function redirects them to the login page with a message.
+    Otherwise, it retrieves the user's signup details and fetches the rooms the user has joined.
+    The rooms are then passed as context to the 'view_userrooms.html' template for rendering.
+
+    Parameters:
+    - request: The HTTP request object.
+
+    Returns:
+    - If the user is not authenticated, redirects to the 'login' page with an info message.
+    - If the user is authenticated, renders the 'view_userrooms.html' template with the user's joined rooms as context.
+
+    """
     if not request.user.is_authenticated:
         messages.info(request, "Please login to access all rooms")
         return redirect('login')
     signup = Signup.objects.get(user=request.user)
     rooms = signup.joined_rooms.all()
-    # for i in notes:
-    #     try:
-    #         i.profile = Signup.objects.get(user=i.user).profile_photo
-    #         i.liked_note = i in Signup.objects.get(user=request.user).liked.all()
-    #         i.disliked_note = i in Signup.objects.get(user=request.user).disliked.all()
-    #         i.l_count = len(i.likes.all())
-    #         i.dl_count = len(i.dislikes.all())
-    #     except Exception as e:
-    #         print(e)
-    #         i.profile = None
-    # d = {'notes': notes, 'viewall': True, 'reviewed': True}
     ctx = {
         'rooms' : rooms,
     }
@@ -936,6 +1106,26 @@ def view_userrooms(request):
 
 
 def view_room(request, code):
+    """
+    Renders the view for a specific room.
+
+    If the user is not authenticated, the function redirects them to the login page.
+    Otherwise, it retrieves the room information based on the provided room code.
+    It fetches the members of the room and the notes associated with the room.
+    For each note, it retrieves additional details such as the profile photo of the user who uploaded the note,
+    whether the current user has liked or disliked the note, and the count of likes and dislikes.
+    Additionally, it counts the number of uploads for each member in the room.
+    Finally, it renders the 'view_room.html' template with the room information, notes, and member details as context.
+
+    Parameters:
+    - request: The HTTP request object.
+    - code: The room code for identifying the room.
+
+    Returns:
+    - If the user is not authenticated, redirects to the 'login' page.
+    - If the room and associated data are successfully retrieved, renders the 'view_room.html' template with the room information, notes, and member details as context.
+
+    """
     if not request.user.is_authenticated:
         return redirect('login')
     
