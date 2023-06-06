@@ -24,6 +24,7 @@ class Notes(models.Model):
     status = models.CharField(max_length=15)
     likes = models.ManyToManyField(Signup, related_name="liked", null=True, blank=True)
     dislikes = models.ManyToManyField(Signup, related_name="disliked", null=True, blank=True)
+    qr_code = models.FileField(null=True)
     def __str__(self):
         return self.user.username+" "+self.status
 

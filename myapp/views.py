@@ -31,6 +31,9 @@ import re
 
 import uuid
 from .forms import *
+from .QrGenerator import generate_qr_code
+
+
 # Make a regular expression
 # for validating an Email
 regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
@@ -463,10 +466,16 @@ def upload_notes(request):
         f = request.POST['ftype']
         d = request.POST['desc']
         u = User.objects.filter(username=request.user.username).first()
-        
         try:
-            Notes.objects.create(user=u, uploadingdate=datetime.date.today(), branch=b, subject=s,
+            new_note = Notes.objects.create(user=u, uploadingdate=datetime.date.today(), branch=b, subject=s,
                                  notesfile=n, filetype=f, description=d, status="Pending")
+            
+            new_note_id = str(new_note.id)
+            ## Qr generate
+            Qr_url = request.META['HTTP_HOST'] + new_note.notesfile.url
+            qr_name = "Qr_" + new_note_id + ".png"
+            new_note.qr_code = generate_qr_code(Qr_url, qr_name)
+            new_note.save()
             messages.success(request, f'Notes Uploaded Successfully')
             return redirect('/view_usernotes/open');
         except:
