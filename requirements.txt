@@ -20,3 +20,4 @@ django_heroku
 gunicorn
 requests==2.25.1
 qrcode
+django-allauth
