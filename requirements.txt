@@ -19,3 +19,4 @@ virtualenv==20.3.0
 django_heroku
 gunicorn
 requests==2.25.1
+qrcode
