@@ -42,7 +42,12 @@
         {{ note.description }}
       </div>
       <div class="e-note-dwnl">
-        <h2 class="title t-l">Download</h2>
+        <div class="download-qr" style="display: flex; gap:5px;">
+          <h2 class="title t-l">Download</h2>
+          <a href="{{ note.qr_code.url}}">
+            <img src="{% static 'images/qr-code.svg' %}" width="50" height="50">
+          </a>
+        </div>
         <a href="{{note.notesfile.url}}">{{ note.filetype|upper }}</a>
       </div>
     </div>
