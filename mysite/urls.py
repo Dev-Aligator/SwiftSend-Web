@@ -21,6 +21,8 @@ from django.conf.urls.static import static
 from django.conf.urls import include
 from django.contrib.sitemaps.views import sitemap
 from myapp.sitemaps import StaticViewSitemap
+from allauth.socialaccount import providers
+from importlib import import_module
 
 sitemaps = {
     'static': StaticViewSitemap,
@@ -86,3 +88,21 @@ urlpatterns = [
     path('like/', like, name="like"),
     path('dislike/', dislike, name="dislike")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+
+
+if settings.SOCIALACCOUNT_ENABLED:
+    urlpatterns += [path("social/", include("allauth.socialaccount.urls"))]
+
+# Provider urlpatterns, as separate attribute (for reusability).
+provider_urlpatterns = []
+for provider in providers.registry.get_list():
+    try:
+        prov_mod = import_module(provider.get_package() + ".urls")
+    except ImportError:
+        continue
+    prov_urlpatterns = getattr(prov_mod, "urlpatterns", None)
+    if prov_urlpatterns:
+        provider_urlpatterns += prov_urlpatterns
+urlpatterns += provider_urlpatterns

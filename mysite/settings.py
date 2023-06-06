@@ -44,7 +44,35 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'svg',
     'admin_honeypot',
+
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.microsoft',
+    'allauth.socialaccount.providers.github',
 ]
+
+SITE_ID = 1
+
+# Add this line to skip this conformation page
+SOCIALACCOUNT_LOGIN_ON_GET=True
+
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+        'OAUTH_PKCE_ENABLED': True,
+    }
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -72,6 +100,16 @@ TEMPLATES = [
             ],
         },
     },
+]
+
+
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+    
 ]
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
@@ -136,6 +174,9 @@ SVG_DIRS=[
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+
+SOCIALACCOUNT_ENABLED = "allauth.socialaccount" in INSTALLED_APPS
+
 # SMTP backend
 
 EMAIL_HOST = 'smtp.gmail.com'
@@ -155,3 +196,4 @@ MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
 
+LOGIN_REDIRECT_URL = '/'

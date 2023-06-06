@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
 {% load svg %}
+{% load socialaccount %}
 {% block content %}
 {% include "header.html" %}
 <main>
+  <link rel="stylesheet" href="{% static 'css/SwiftSend.social-login.css'%}">
   <div class="login">
     <h1 class="colored title">Welcome back</h1>
     <form action="{% url "login" %}" method="POST" class="login-form">
@@ -27,6 +29,15 @@
         <button type="button" class="button lg" id="login-btn">Login</button>
         <p class="tip">New User? <a class="colored" href="/signup">Sign Up</a></p>
       </div>
+
+      <div class="separator">Or</div>
+
+			<div class="sign-in-with-google">
+				<a class="google-button" href="{% provider_login_url 'google' %}">
+					<img width=30 src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="">
+				  Đăng nhập với Google
+				</a>
+			</div>
     </form>
   </div>
 </main>

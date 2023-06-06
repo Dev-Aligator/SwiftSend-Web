@@ -335,6 +335,10 @@ def profile(request):
             signup = Signup.objects.create(user=user, contact="", branch="", role="")
             signup.save()
             data = Signup.objects.get(user = user)
+        else:
+            signup = Signup.objects.create(user=user, contact="", branch="", role="1")
+            signup.save()
+            data = Signup.objects.get(user=user)
     d = {'data': data, 'user': user, 'auth': request.user.is_authenticated}
     if (request.user.is_superuser):
         d["admin"] = True
