@@ -37,6 +37,16 @@ class OTPModel(models.Model):
     class Meta:
         verbose_name = 'OTP'
 
+# Model for JoinDate
+class JoinDate(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    room = models.ForeignKey('Room', on_delete=models.CASCADE)
+    joined_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.user.username + " " + self.room.name
+
+
 
 # Model for Room
 class Room(models.Model):
@@ -48,5 +58,3 @@ class Room(models.Model):
     photo = models.ImageField(null=True, blank=True)
     def __str__(self):
         return self.name
-
-

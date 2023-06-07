@@ -1070,11 +1070,12 @@ def create_room(request):
 
         signup = Signup.objects.get(user=request.user)
         signup.joined_rooms.add(room)
+        JoinDate.objects.create(user=request.user, room=room)
 
         messages.success(request, room_code_msg)
 
         return redirect('view_userrooms')
-
+    
     return render(request, 'create_room.html')
 
 def join_room(request):
@@ -1086,6 +1087,7 @@ def join_room(request):
         room = Room.objects.get(room_code=room_code)
         signup = Signup.objects.get(user=request.user)
         signup.joined_rooms.add(room)
+        JoinDate.objects.create(user=request.user, room=room)
         return redirect('view_userrooms')
     
     return render(request, 'join_room.html')
@@ -1159,6 +1161,8 @@ def view_room(request, code):
     
     for u in members:
         u.uploads = Notes.objects.filter(user=u.user, branch=room.room_code).count()
+        join_date = JoinDate.objects.filter(user=u.user, room=room).first()
+        u.joined_date = join_date.joined_at
     d = {'data': room, 'code':code, 'notes': notes, 'members': members}
     return render(request, "view_room.html", d)
     
