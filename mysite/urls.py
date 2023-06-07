@@ -52,9 +52,10 @@ urlpatterns = [
     path('create_room/', create_room, name='create_room'),
     path('join_room/', join_room, name='join_room'),
     path('view_userrooms/', view_userrooms, name='view_userrooms'),
-
+    
     path('room/<str:code>', view_room, name='view_room'),
     path('edit_room/<str:code>', edit_room, name='edit_room'),
+    path('delete_room/<str:code>', delete_room, name='delete_room'),
 
     path('upload_notes/',upload_notes,name="upload_notes"),
     path('view_usernotes/<str:type>',view_usernotes,name="view_usernotes"),

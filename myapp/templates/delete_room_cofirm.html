@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+{% load svg %}
+{% block content %}
+{% include "header.html" %}
+
+<main>
+    <div class="login">
+      <h1 class="colored title">Delete Room Confirm</h1>
+      <form method="POST" class="login-form delete-room-form">
+        {% csrf_token %}
+        <div class="input-group">
+          <p style="text-align: center;">Type in <strong>{{ name_encode }}</strong> to confirm:</p>
+          <div class="input-field">
+            <input type="text" name="name" id="name" required>
+          </div>
+        </div>
+        <div class="g-recaptcha" data-sitekey="6Lf3i3waAAAAABaIbVWFi0Cnmq5YQ5JuG_NC2fVd"></div>
+        <div class="form-footer">
+          <button type="submit" class="button lg" id="submit-button" style="background-color: crimson;" disabled>Delete {{ room.name }}</button>
+        </div>
+      </form>
+
+      
+    </div>
+</main>
+
+<script>
+    const RoomNameEncode = "{{ name_encode }}"; 
+</script>
+
+<script src="{% static 'js/SwifiSend.delete-room-confirm.js' %}"></script>
+
+{% include "footer1.html" %}
+{% endblock content %}

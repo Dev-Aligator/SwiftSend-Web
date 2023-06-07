@@ -1192,3 +1192,25 @@ def edit_room(request, code):
         form = ImageRoomForm()
     d = {'room': room, 'form':form}
     return render(request, 'edit_room.html', d)
+
+
+def delete_room(request, code):
+    if not request.user.is_authenticated:
+        messages.info(request, "Please login first")
+        return redirect('login')
+    room_code = code.rsplit('.', 1)[1]
+    room = Room.objects.get(room_code=room_code)
+    
+
+    if request.method == 'POST':
+        room.delete()
+        messages.success(request, "Room Deleted Successfully")
+        return redirect('view_userrooms')
+    
+    room_name_encode = room.name.replace(" ", "-") + "/" + room_code
+    ctx = {
+        'room':room,
+        'name_encode': room_name_encode
+    }
+
+    return render(request, 'delete_room_cofirm.html', ctx)
